@@ -83,6 +83,7 @@ export default function Home() {
   const toggle = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+    if (audio.ended) { await replay(); return; }
     if (audio.paused) {
       await audio.play(); setPlaying(true); rafRef.current = requestAnimationFrame(tick);
     } else { audio.pause(); setPlaying(false); }
@@ -135,18 +136,41 @@ export default function Home() {
       </section>
 
       <section className="main-scene" aria-hidden={!started} onPointerDown={leaveSpark}>
-        <div className="halo" /><div className="fire-trace" />
-        <div className="dust dust-a" /><div className="dust dust-b" />
+        <div className="fixed-atmosphere"><div className="halo" /><div className="fire-trace" /><div className="dust dust-a" /><div className="dust dust-b" /></div>
 
-        {time < 12.5 && <div className="opening-copy"><p>给仍然相信灿烂的你</p></div>}
-
-        {!ended && currentLyric && (
-          <div className={`lyric-field ${currentLyric ? 'has-lyric' : ''}`} key={lyricIndex}>
-            <p className="lyric-current">{currentLyric}</p>
-          </div>
+        {currentLyric && (
+          <div className="lyric-field" key={lyricIndex}><p className="lyric-current">{currentLyric}</p></div>
         )}
 
-        <p className="touch-hint">触碰，留下一点光</p>
+        <div className="blessing-pages">
+          <article className="blessing-page page-one">
+            <span className="page-number">01</span>
+            <div><p>愿你走过黑白</p><p>仍能辨认灿烂</p></div>
+            <span className="scroll-note">向上轻推</span>
+          </article>
+          <article className="blessing-page page-two">
+            <span className="page-number">02</span>
+            <div><p>愿你清醒</p><p>却不因此失去热烈</p></div>
+            <small>也不必为了证明什么而燃烧</small>
+          </article>
+          <article className="blessing-page page-three">
+            <span className="page-number">03</span>
+            <div><p>愿你理解世界</p><p>也允许它保留神秘</p></div>
+            <small>在所有确定之外，仍有梦可做</small>
+          </article>
+          <article className="blessing-page page-four">
+            <span className="page-number">04</span>
+            <div><p>愿遥远的路</p><p>最终都成为自由的一部分</p></div>
+          </article>
+          <article className="blessing-page page-five">
+            <span className="page-number">05</span>
+            <div><p>愿所有未说出的美好</p><p>都在属于你的时刻发亮</p></div>
+            <strong>有梦了，快乐。</strong>
+            <button type="button" onClick={(event) => { event.stopPropagation(); replay(); }}>从头再听</button>
+          </article>
+        </div>
+
+        <p className="touch-hint">触碰空白处，留下一点光</p>
         <div className="spark-layer" aria-hidden="true">
           {sparks.map((spark) => (
             <span className="touch-spark" key={spark.id} style={{ left: spark.x, top: spark.y }}>
@@ -156,22 +180,14 @@ export default function Home() {
         </div>
 
         <div className="player-chrome" onPointerDown={(event) => event.stopPropagation()}>
-          <button type="button" onClick={toggle} className="play-toggle" aria-label={playing ? '暂停' : '继续播放'}>
-            <span className={playing ? 'pause-mark' : 'play-mark'} />
+          <button type="button" onClick={toggle} className="play-toggle" aria-label={playing ? '暂停' : ended ? '重新播放' : '继续播放'}>
+            <span className={playing ? 'pause-mark' : ended ? 'replay-mark' : 'play-mark'} />
           </button>
           <div className="progress-track"><i /></div>
           <span className="track-name">艳火 · 张悬</span>
         </div>
       </section>
 
-      <section className="blessing" aria-hidden={!ended}>
-        <div className="blessing-mark" />
-        <p>愿你有梦可做</p>
-        <p>也有自己的艳火</p>
-        <div className="blessing-space" />
-        <p className="blessing-small">清醒，自由，灿烂</p>
-        <button type="button" onClick={replay}>再听一次</button>
-      </section>
     </main>
   );
 }
