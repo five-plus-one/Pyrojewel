@@ -234,9 +234,10 @@ export default function Home() {
         onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') begin(); }} aria-hidden={started} aria-label="打开祝福">
         <img src={IMAGES.cover} alt="暗色中掠过的一束红光" />
         <div className="cover-shade" />
+        <div className="cover-ambient" aria-hidden="true"><i /><i /><i /></div>
         <div className="cover-kicker"><span>TO</span> 啵啵老师</div>
         <div className="cover-title"><span>艳</span><span>火</span><small>PYROJEWEL</small></div>
-        <div className="cover-note"><span>一份写在艳火里的祝福</span><b>轻触任意位置打开</b></div>
+        <div className="cover-note"><span>一份写在艳火里的祝福</span><div><small className="headphone-tip"><i />佩戴耳机以获得最佳效果</small><b>轻触任意位置打开</b></div></div>
         {notice && <p className="audio-notice" role="alert">{notice}</p>}
       </section>
 
