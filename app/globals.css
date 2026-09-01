@@ -18,6 +18,7 @@ button { font: inherit; }
 }
 .prologue {
   position: absolute; inset: 0; display: grid; place-items: center; z-index: 20; background: #060606;
+  cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent;
   transition: opacity 1.6s cubic-bezier(.7,0,.2,1), visibility 1.6s;
 }
 .is-started .prologue { opacity: 0; visibility: hidden; }
@@ -45,9 +46,13 @@ button { font: inherit; }
 .opening-copy p { margin: 0; } .is-started .opening-copy { opacity: .72; transform: none; }
 .dust { position: absolute; inset: 0; opacity: calc(.08 + var(--intensity) * .09); pointer-events: none; background-image: radial-gradient(circle at 20% 30%,#cabeb1 0 1px,transparent 1.5px),radial-gradient(circle at 72% 44%,#a89789 0 .6px,transparent 1px),radial-gradient(circle at 47% 80%,#c06656 0 .7px,transparent 1.2px); background-size: 149px 173px,211px 193px,167px 221px; animation: drift 19s linear infinite; }
 .dust-b { transform: rotate(180deg) scale(1.1); opacity: .06; animation-duration: 28s; }
-.lyric-field { position: absolute; left: 11%; right: 11%; top: 48%; min-height: 90px; transform: translateY(-50%); text-align: center; font-family: 'Songti SC','STSong','Noto Serif SC',serif; }
-.lyric-current { margin: 0; color: rgba(226,221,211,.88); font-size: clamp(15px,4.2vw,18px); line-height: 1.9; letter-spacing: .08em; text-shadow: 0 0 22px rgba(177,46,42,.08); animation: lyricIn 1.4s ease both; }
-.lyric-next { margin: 20px 0 0; color: rgba(214,208,198,.16); font-size: 10px; line-height: 1.8; letter-spacing: .07em; filter: blur(.2px); }
+.lyric-field { position: absolute; left: 12%; right: 12%; bottom: 19%; min-height: 40px; text-align: left; font-family: 'Songti SC','STSong','Noto Serif SC',serif; pointer-events: none; }
+.lyric-current { margin: 0; color: rgba(226,221,211,.56); font-size: clamp(11px,3.2vw,13px); line-height: 1.9; letter-spacing: .09em; text-shadow: 0 0 22px rgba(177,46,42,.08); animation: lyricIn 1.4s ease both; }
+.touch-hint { position: absolute; top: 54%; left: 0; right: 0; margin: 0; color: rgba(214,208,198,.18); font-family: 'Songti SC','STSong',serif; font-size: 9px; letter-spacing: .18em; text-align: center; pointer-events: none; animation: hintAway 8s 4s both; }
+.spark-layer { position: absolute; inset: 0; pointer-events: none; }
+.touch-spark { position: absolute; display: block; width: 1px; height: 1px; }
+.touch-spark i { position: absolute; left: 0; top: 0; width: 3px; height: 3px; border-radius: 50%; background: #d44b3d; box-shadow: 0 0 12px 3px rgba(212,75,61,.4),0 0 36px 10px rgba(120,25,23,.18); animation: sparkLight 2.2s ease-out both; }
+.touch-spark em { position: absolute; left: 10px; top: -7px; color: rgba(214,208,198,.45); font-family: 'Songti SC','STSong',serif; font-size: 9px; font-style: normal; letter-spacing: .16em; white-space: nowrap; animation: sparkWord 2.2s ease-out both; }
 .player-chrome { position: absolute; left: 8%; right: 8%; bottom: calc(20px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 12px; opacity: .55; }
 .play-toggle { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; color: rgba(214,208,198,.7); background: transparent; -webkit-tap-highlight-color: transparent; }
 .pause-mark { width: 7px; height: 9px; border-left: 1px solid currentColor; border-right: 1px solid currentColor; }
@@ -67,5 +72,8 @@ button { font: inherit; }
 @keyframes grain { 0% { transform: translate3d(-2%,-2%,0); } 25% { transform: translate3d(2%,1%,0); } 50% { transform: translate3d(-1%,2%,0); } 75% { transform: translate3d(1%,-1%,0); } 100% { transform: translate3d(2%,2%,0); } }
 @keyframes drift { from { background-position: 0 0,0 0,0 0; } to { background-position: 44px -120px,-30px -160px,20px -190px; } }
 @keyframes lyricIn { from { opacity: 0; transform: translateY(5px); filter: blur(2px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes hintAway { 0%,38% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes sparkLight { 0% { opacity: 0; transform: scale(.2); } 18% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.5) translateY(-18px); } }
+@keyframes sparkWord { 0%,12% { opacity: 0; transform: translateY(3px); } 26%,60% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
 @media (min-width: 521px) { .experience { box-shadow: 0 0 0 1px rgba(255,255,255,.025),0 0 80px rgba(70,15,14,.08); } }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }

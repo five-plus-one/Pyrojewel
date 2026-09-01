@@ -6,6 +6,8 @@ const AUDIO_URL = 'https://img.assets.five-plus-one.com/img/2026/09/3aaea3590be5
 const LRC_URL = 'https://img.assets.five-plus-one.com/img/2026/09/9392fcd19d94a28ce606e276fd79375b.lrc';
 
 type Lyric = { time: number; text: string };
+type Spark = { id: number; x: number; y: number; word: string };
+const SPARK_WORDS = ['清醒', '自由', '热烈', '柔软', '坚定', '好梦'];
 
 const FALLBACK_LYRICS: Lyric[] = [
   [13.8, '扑火，我们相视笑着扑火，'], [21.23, '什么都不说。不说的，是真的；'],
@@ -44,6 +46,7 @@ export default function Home() {
   const [duration, setDuration] = useState(255);
   const [ended, setEnded] = useState(false);
   const [notice, setNotice] = useState('');
+  const [sparks, setSparks] = useState<Spark[]>([]);
 
   useEffect(() => {
     fetch(LRC_URL).then((res) => res.text()).then((text) => {
@@ -92,13 +95,24 @@ export default function Home() {
     rafRef.current = requestAnimationFrame(tick);
   };
 
+  const leaveSpark = (event: React.PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const spark = {
+      id: Date.now() + Math.random(),
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+      word: SPARK_WORDS[Math.floor(Math.random() * SPARK_WORDS.length)],
+    };
+    setSparks((current) => [...current.slice(-7), spark]);
+    window.setTimeout(() => setSparks((current) => current.filter((item) => item.id !== spark.id)), 2200);
+  };
+
   const lyricIndex = useMemo(() => {
     let index = -1;
     for (let i = 0; i < lyrics.length; i += 1) { if (time >= lyrics[i].time) index = i; else break; }
     return index;
   }, [lyrics, time]);
   const currentLyric = lyricIndex >= 0 ? lyrics[lyricIndex].text : '';
-  const nextLyric = lyricIndex >= 0 && lyricIndex < lyrics.length - 1 ? lyrics[lyricIndex + 1].text : '';
   const progress = Math.min(100, (time / duration) * 100 || 0);
   const intensity = Math.max(0, Math.min(1, (time - 12) / 180));
 
@@ -109,30 +123,39 @@ export default function Home() {
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
         onEnded={() => { setPlaying(false); setEnded(true); setTime(duration); }} />
 
-      <section className="prologue" aria-hidden={started}>
+      <section className="prologue" aria-hidden={started} onClick={begin} role="button" tabIndex={started ? -1 : 0}
+        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') begin(); }} aria-label="轻触任意位置，开始播放">
         <div className="prologue-grain" />
-        <button className="ember-trigger" type="button" onClick={begin} aria-label="轻触微光，开始播放">
+        <div className="ember-trigger" aria-hidden="true">
           <span className="ember-core" /><span className="ember-ring" />
-        </button>
+        </div>
         <div className="title-lockup"><h1>艳火</h1><p>PYROJEWEL</p></div>
-        <p className="sound-note">轻触微光 · 开启声音</p>
+        <p className="sound-note">轻触任意位置 · 开启声音</p>
         {notice && <p className="audio-notice" role="alert">{notice}</p>}
       </section>
 
-      <section className="main-scene" aria-hidden={!started}>
+      <section className="main-scene" aria-hidden={!started} onPointerDown={leaveSpark}>
         <div className="halo" /><div className="fire-trace" />
         <div className="dust dust-a" /><div className="dust dust-b" />
 
         {time < 12.5 && <div className="opening-copy"><p>给仍然相信灿烂的你</p></div>}
 
-        {!ended && (
+        {!ended && currentLyric && (
           <div className={`lyric-field ${currentLyric ? 'has-lyric' : ''}`} key={lyricIndex}>
             <p className="lyric-current">{currentLyric}</p>
-            {time > 54 && time < 230 && <p className="lyric-next">{nextLyric}</p>}
           </div>
         )}
 
-        <div className="player-chrome">
+        <p className="touch-hint">触碰，留下一点光</p>
+        <div className="spark-layer" aria-hidden="true">
+          {sparks.map((spark) => (
+            <span className="touch-spark" key={spark.id} style={{ left: spark.x, top: spark.y }}>
+              <i /><em>{spark.word}</em>
+            </span>
+          ))}
+        </div>
+
+        <div className="player-chrome" onPointerDown={(event) => event.stopPropagation()}>
           <button type="button" onClick={toggle} className="play-toggle" aria-label={playing ? '暂停' : '继续播放'}>
             <span className={playing ? 'pause-mark' : 'play-mark'} />
           </button>
