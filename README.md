@@ -10,7 +10,7 @@
 
 推荐使用微信扫码访问：
 
-<img src="https://img.assets.five-plus-one.com/img/2026/09/8a5644ba4c1f1ef9b981c8892a2c4042.png" alt="微信扫码体验" width="250">
+<img src="https://img.assets.five-plus-one.com/img/2026/09/c27c9f3bf85ddb40c740d4bd3fed6a80.png" alt="微信扫码体验" width="125">
 
 ## ✨ 特性
 
